@@ -30,7 +30,11 @@ public class CaesarsСipher extends JFrame {
                         System.out.println("Please copy link and how many characters to perform the operation");
                         if (result.equalsIgnoreCase("E")) result = "Encrypt";
                         if (result.equalsIgnoreCase("D")) result = "Decipher";
-                        encryptDecipher(result, reader.readLine(), Integer.parseInt(reader.readLine()));
+                        String fileName = reader.readLine();
+                        int key = Integer.parseInt(reader.readLine());
+                        System.out.println("Please write FileNameSave");
+                        String fileNameSave = reader.readLine();
+                        encryptDecipher(result, fileName, key, fileNameSave);
                         break;
 
                     } else if (result.equalsIgnoreCase("Cryptanalysis") || result.equalsIgnoreCase("C")){
@@ -40,11 +44,13 @@ public class CaesarsСipher extends JFrame {
                             resultSecond = "BruteForce";
                             System.out.println("Please copy text file");
                             String fileName = reader.readLine();
-                            breakingInto(resultSecond, fileName);
+                            System.out.println("Please write Save name file");
+                            String fileNameSave = reader.readLine();
+                            breakingInto(resultSecond, fileName, fileNameSave);
                             break;
                         } else if (resultSecond.equalsIgnoreCase("analysis") || resultSecond.equalsIgnoreCase("a")){
                             resultSecond = "StaticAnalysis";
-                            breakingInto(resultSecond,"/Users/mrshmel/Documents/Encrypt.txt");
+                            breakingInto(resultSecond,"/Users/mrshmel/Documents/Encrypt.txt", null);
                             break;
                         }
                         else {
@@ -58,24 +64,19 @@ public class CaesarsСipher extends JFrame {
 
     }
 
-    public static void breakingInto (String info, String fileName) throws IOException {
+    public static void breakingInto (String info, String fileNameHack, String fileNameSave) throws IOException{
 
         if (info.equalsIgnoreCase("BruteForce")){
 
             boolean test = false;
             int x = 1;
-            System.out.println("Please write text name Brute");
-            BufferedReader readerConsoleFileName = new BufferedReader(new InputStreamReader(System.in));
-            String fileNameDep = readerConsoleFileName.readLine();
-            readerConsoleFileName.close();
                 while (!test) {
-                    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-                        File testFile = new File(fileNameDep);
+                    try (BufferedReader reader = new BufferedReader(new FileReader(fileNameHack))) {
+                        File testFile = new File("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src", fileNameSave);
                         if (testFile.exists()) {
                             testFile.delete();
                         }
-                        System.out.println("ja tu");
-                        Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameDep));
+                        Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameSave));
                         BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true));
                         while (reader.ready()) {
                             for (char ch : reader.readLine().toCharArray()) {
@@ -104,20 +105,22 @@ public class CaesarsСipher extends JFrame {
                                 for (int j = 0; j < ch.length - 1; j++) {
                                     if (punctuationMarks.contains(ch[j])) {
                                         if (ch[j + 1] == ' ') {
-                                            try{
-                                                BufferedReader readerConsole = new BufferedReader(new InputStreamReader(System.in));
-                                                System.out.println("Text this normal? Y/N");
-                                                System.out.println(result.get(0));
-                                                //System.out.println(result.get(1));
-                                                if (readerConsole.readLine().equalsIgnoreCase("Y")){
-                                                    System.out.println("zaebok");
-                                                    test = true;
-                                                    readerConsole.close();
-                                                    break;
-                                                }else {
-                                                    break;
+                                            if(result.stream().map(a -> a.split(" ")).allMatch(a -> Arrays.stream(a).allMatch(b -> b.length() < 25))){
+                                                try {
+                                                    BufferedReader readerConsole = new BufferedReader(new InputStreamReader(System.in));
+                                                    System.out.println("Text this normal? Y/N");
+                                                    System.out.println(result.get(0));
+                                                    System.out.println(result.get(1));
+                                                    if (readerConsole.readLine().equalsIgnoreCase("Y")) {
+                                                        System.out.println("This kay " + x);
+                                                        test = true;
+                                                        readerConsole.close();
+                                                        break;
+                                                    } else {
+                                                        break;
+                                                    }
+                                                } catch (Exception e) {
                                                 }
-                                            }catch (Exception e){
                                             }
                                         }
                                     }
@@ -166,7 +169,7 @@ public class CaesarsСipher extends JFrame {
             }
             System.out.println("---------------------");*/
 
-            Path file = Paths.get(fileName);
+            Path file = Paths.get(fileNameHack);
             List<String> fileEncrypt = Files.lines(file).collect(Collectors.toList());
             Map<Character, Integer> mapEncrypt = new HashMap<>();
             for (int i = 0; i < fileEncrypt.size(); i++) {
@@ -209,7 +212,7 @@ public class CaesarsСipher extends JFrame {
                //index++;
                 System.out.println(indexEncrypt);
                 System.out.println(indexAnalysis);
-               encryptDecipher("Decipher", fileName, index);
+               //encryptDecipher("Decipher", fileNameHack, index);
                BufferedReader reader = new BufferedReader(new FileReader("Decipher.txt"));
                 System.out.println("Text normal ?  Y/N");
                 System.out.println(reader.readLine());
@@ -225,17 +228,14 @@ public class CaesarsСipher extends JFrame {
     }
 
 
-    public static void encryptDecipher(String info, String fileName, int x) throws IOException {
+    public static void encryptDecipher(String info, String fileName, int x, String fileNameSave) throws IOException {
         if (info.equalsIgnoreCase("Encrypt")) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            BufferedReader readerConsole = new BufferedReader(new InputStreamReader(System.in))) {
-                System.out.println("Please write nameFile");
-                String fileNameDecr = readerConsole.readLine();
-                File file = new File(fileNameDecr);
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+                File file = new File(fileNameSave);
                 if (file.exists()) {
                     file.delete();
                 }
-                Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameDecr));
+                Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameSave));
                 while (reader.ready()) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true))) {
                         char[] ch = reader.readLine().toCharArray();
@@ -268,11 +268,11 @@ public class CaesarsСipher extends JFrame {
             }
         } else if (info.equalsIgnoreCase("Decipher")) {
             try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-                File file = new File("Decipher.txt");
+                File file = new File("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src", fileNameSave);
                 if (file.exists()) {
                     file.delete();
                 }
-                Path newFile = Files.createFile(Paths.get("Decipher.txt"));
+                Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src", fileNameSave));
                 while (reader.ready()) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true))) {
                         char[] ch = reader.readLine().toCharArray();

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -5,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CaesarsСipher {
+public class CaesarsСipher extends JFrame {
 
     public static List<Character> alphabet = generateAlphabet();
     public static List<Character> punctuationMarks = generatePunctuationMarks();
@@ -63,15 +64,19 @@ public class CaesarsСipher {
 
             boolean test = false;
             int x = 1;
+            System.out.println("Please write text name Brute");
+            BufferedReader readerConsoleFileName = new BufferedReader(new InputStreamReader(System.in));
+            String fileNameDep = readerConsoleFileName.readLine();
+            readerConsoleFileName.close();
                 while (!test) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-                        File testFile = new File("TestBrute.txt");
+                        File testFile = new File(fileNameDep);
                         if (testFile.exists()) {
                             testFile.delete();
                         }
-                        Path newFile = Files.createFile(Paths.get("TestBrute.txt"));
+                        System.out.println("ja tu");
+                        Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameDep));
                         BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true));
-                        System.out.println(x);
                         while (reader.ready()) {
                             for (char ch : reader.readLine().toCharArray()) {
                                 if (alphabet.contains(ch)) {
@@ -221,20 +226,22 @@ public class CaesarsСipher {
 
 
     public static void encryptDecipher(String info, String fileName, int x) throws IOException {
-        int numb = x;
         if (info.equalsIgnoreCase("Encrypt")) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-                File file = new File("Encrypt.txt");
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            BufferedReader readerConsole = new BufferedReader(new InputStreamReader(System.in))) {
+                System.out.println("Please write nameFile");
+                String fileNameDecr = readerConsole.readLine();
+                File file = new File(fileNameDecr);
                 if (file.exists()) {
                     file.delete();
                 }
-                Path newFile = Files.createFile(Paths.get("Encrypt.txt"));
+                Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameDecr));
                 while (reader.ready()) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true))) {
                         char[] ch = reader.readLine().toCharArray();
                         for (char c : ch) {
                             if (alphabet.contains(c)) {
-                                int index = alphabet.indexOf(c) + numb;
+                                int index = alphabet.indexOf(c) + x;
                                 if (index > SIZE_ALPHABET) {
                                     while (true) {
                                         index -= alphabet.size();
@@ -271,7 +278,7 @@ public class CaesarsСipher {
                         char[] ch = reader.readLine().toCharArray();
                         for (char c : ch) {
                             if (alphabet.contains(c)) {
-                                int index = alphabet.indexOf(c) - numb;
+                                int index = alphabet.indexOf(c) - x;
                                 if (index < 0) {
                                     while (true) {
                                         index += alphabet.size();

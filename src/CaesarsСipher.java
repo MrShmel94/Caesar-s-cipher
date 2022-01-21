@@ -46,11 +46,17 @@ public class CaesarsСipher extends JFrame {
                             String fileName = reader.readLine();
                             System.out.println("Please write Save name file");
                             String fileNameSave = reader.readLine();
-                            breakingInto(resultSecond, fileName, fileNameSave);
+                            breakingInto(resultSecond, fileName, fileNameSave, null);
                             break;
                         } else if (resultSecond.equalsIgnoreCase("analysis") || resultSecond.equalsIgnoreCase("a")){
                             resultSecond = "StaticAnalysis";
-                            breakingInto(resultSecond,"/Users/mrshmel/Documents/Encrypt.txt", null);
+                            System.out.println("Please copy file exp");
+                            String fileName = reader.readLine();
+                            System.out.println("Please copy file to analysis russian lenguage");
+                            String fileNameAnalysis = reader.readLine();
+                            System.out.println("Please write file name Save");
+                            String fileNameSave = reader.readLine();
+                            breakingInto(resultSecond,fileName, fileNameSave, fileNameAnalysis);
                             break;
                         }
                         else {
@@ -64,7 +70,7 @@ public class CaesarsСipher extends JFrame {
 
     }
 
-    public static void breakingInto (String info, String fileNameHack, String fileNameSave) throws IOException{
+    public static void breakingInto (String info, String fileNameHack, String fileNameSave, String fileNameAnalysis) throws IOException{
 
         if (info.equalsIgnoreCase("BruteForce")){
 
@@ -135,9 +141,8 @@ public class CaesarsСipher extends JFrame {
                 }
             }
         if (info.equalsIgnoreCase("StaticAnalysis")) {
-            System.out.println("Please copy additional file to analysis");
-            BufferedReader readerConsole = new BufferedReader(new InputStreamReader(System.in));
-            Path fileAnalysis = Paths.get(readerConsole.readLine());
+
+            Path fileAnalysis = Paths.get(fileNameAnalysis);
             List<String> resultAnalysis = Files.lines(fileAnalysis).collect(Collectors.toList());
             Map<Character, Integer> mapAnalysis = new HashMap<>();
             for (int i = 0; i < resultAnalysis.size(); i++) {
@@ -152,22 +157,9 @@ public class CaesarsСipher extends JFrame {
                     }
                 }
             }
-
             Map<Character, Integer> sortedMapAnalysis = mapAnalysis.entrySet().stream().
                     sorted(Map.Entry.<Character, Integer>comparingByValue().reversed()).
                     collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-            /*int maxAnalysis = 0;
-            for (int i : sortedMapAnalysis.values()) {
-                maxAnalysis += i;
-            }*/
-            List<Character> sortAnalysis = sortedMapAnalysis.entrySet().stream().limit(5).map(a -> a.getKey()).collect(Collectors.toList());
-            /*for (char a : sortAnalysis){
-                System.out.println(alphabet.indexOf(a));
-            }*/
-            /*for (Map.Entry <Character, Integer> ch : sortedMapAnalysis.entrySet()){
-                System.out.println(ch.getKey() + " : " + ch.getValue() + " : " + ch.getValue() * 1.0 / maxAnalysis * 100 + "%");
-            }
-            System.out.println("---------------------");*/
 
             Path file = Paths.get(fileNameHack);
             List<String> fileEncrypt = Files.lines(file).collect(Collectors.toList());
@@ -184,44 +176,25 @@ public class CaesarsСipher extends JFrame {
                     }
                 }
             }
+
             Map<Character, Integer> sortedMapEncrypt = mapEncrypt.entrySet().stream().
                     sorted(Map.Entry.<Character, Integer>comparingByValue().reversed()).
                     collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-            /*int maxEncrypt = 0;
-            for (int i : sortedMapEncrypt.values()) {
-                maxEncrypt += i;
-            }
-            System.out.println("-----------");*/
-            List<Character> sortEncrypt = sortedMapEncrypt.entrySet().stream().limit(5).map(a -> a.getKey()).collect(Collectors.toList());
-            /*for (char a : sortEncrypt){
-            System.out.println(alphabet.indexOf(a));
-        }*/
 
-        /*for (Map.Entry <Character, Integer> ch : sortedMapEncrypt.entrySet()){
-            System.out.println(ch.getKey() + " : " + ch.getValue() + " : " + ch.getValue() * 1.0 / maxEncrypt * 100 + "%");
-        }*/
-            for (int i = 0; i < sortEncrypt.size(); i++) {
-               int indexEncrypt = alphabet.indexOf(sortEncrypt.get(i));
-               int indexAnalysis = alphabet.indexOf(sortAnalysis.get(i));
-               int index = 0;
-               if (indexAnalysis > indexEncrypt){
-                   index = indexAnalysis - indexEncrypt;
-               }else {
-                   index = indexEncrypt - indexAnalysis;
-               }
-               //index++;
-                System.out.println(indexEncrypt);
-                System.out.println(indexAnalysis);
-               //encryptDecipher("Decipher", fileNameHack, index);
-               BufferedReader reader = new BufferedReader(new FileReader("Decipher.txt"));
-                System.out.println("Text normal ?  Y/N");
-                System.out.println(reader.readLine());
-                String result = readerConsole.readLine();
-                if (result.equalsIgnoreCase("Y")){
-                    System.out.println("NAISAAAA");
-                    reader.close();
-                    readerConsole.close();
-                    break;
+            List <Character> charactersEncrypt = sortedMapEncrypt.entrySet().stream().map(a -> a.getKey()).collect(Collectors.toList());
+            List <Character> charactersAnalysis = sortedMapAnalysis.entrySet().stream().map(a -> a.getKey()).collect(Collectors.toList());
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileNameSave))){
+                for (int i = 0; i < fileEncrypt.size(); i++) {
+                    char [] time = fileEncrypt.get(i).toCharArray();
+                    for (int j = 0; j < time.length; j++) {
+                        if (alphabet.contains(time[j])) {
+                            int index = charactersEncrypt.indexOf(time[j]);
+                            time[j] = charactersAnalysis.get(index);
+                        }
+                    }
+                    writer.write(time);
+                    writer.write('\n');
                 }
             }
         }

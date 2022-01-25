@@ -6,16 +6,11 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CaesarsСipher extends JFrame {
+public class CaesarsСipher{
 
     public static List<Character> alphabet = generateAlphabet();
     public static List<Character> punctuationMarks = generatePunctuationMarks();
     public static final int SIZE_ALPHABET = alphabet.size() - 1;
-
-    public static void main(String[] args) throws IOException {
-        info();
-    }
-
 
     public static void info () throws IOException {
 
@@ -201,20 +196,22 @@ public class CaesarsСipher extends JFrame {
     }
 
 
-    public static void encryptDecipher(String info, String fileName, int x, String fileNameSave) throws IOException {
+    public static void encryptDecipher(String info, String fileNameEncDec, int key, String fileNameSave) throws IOException {
+        if (!fileNameSave.endsWith(".txt")){
+            fileNameSave += ".txt";
+        }
         if (info.equalsIgnoreCase("Encrypt")) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-                File file = new File(fileNameSave);
-                if (file.exists()) {
-                    file.delete();
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileNameEncDec))) {
+                if (Files.exists(Paths.get("src/",fileNameSave))) {
+                    Files.delete(Paths.get("src/",fileNameSave));
                 }
-                Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameSave));
+                Path newFile = Files.createFile(Paths.get("src/",fileNameSave));
                 while (reader.ready()) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true))) {
                         char[] ch = reader.readLine().toCharArray();
                         for (char c : ch) {
                             if (alphabet.contains(c)) {
-                                int index = alphabet.indexOf(c) + x;
+                                int index = alphabet.indexOf(c) + key;
                                 if (index > SIZE_ALPHABET) {
                                     while (true) {
                                         index -= alphabet.size();
@@ -240,18 +237,18 @@ public class CaesarsСipher extends JFrame {
                 }
             }
         } else if (info.equalsIgnoreCase("Decipher")) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-                File file = new File("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src", fileNameSave);
-                if (file.exists()) {
-                    file.delete();
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileNameEncDec))) {
+
+                if (Files.exists(Paths.get("src/",fileNameSave))) {                                                //Checking if a file exists to save?
+                    Files.delete(Paths.get("src/",fileNameSave));
                 }
-                Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src", fileNameSave));
+                Path newFile = Files.createFile(Paths.get("src/", fileNameSave));
                 while (reader.ready()) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true))) {
                         char[] ch = reader.readLine().toCharArray();
                         for (char c : ch) {
                             if (alphabet.contains(c)) {
-                                int index = alphabet.indexOf(c) - x;
+                                int index = alphabet.indexOf(c) - key;
                                 if (index < 0) {
                                     while (true) {
                                         index += alphabet.size();

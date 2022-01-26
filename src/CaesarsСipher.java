@@ -1,9 +1,11 @@
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class CaesarsСipher{
@@ -63,9 +65,13 @@ public class CaesarsСipher{
                 }
             }
 
-    }
+    }              //If the user wants to work with the console
 
     public static void breakingInto (String info, String fileNameHack, String fileNameSave, String fileNameAnalysis) throws IOException{
+
+        if (!fileNameSave.endsWith(".txt")){
+            fileNameSave += ".txt";
+        }
 
         if (info.equalsIgnoreCase("BruteForce")){
 
@@ -73,11 +79,12 @@ public class CaesarsСipher{
             int x = 1;
                 while (!test) {
                     try (BufferedReader reader = new BufferedReader(new FileReader(fileNameHack))) {
-                        File testFile = new File("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src", fileNameSave);
-                        if (testFile.exists()) {
-                            testFile.delete();
+
+                        if (Files.exists(Paths.get("src/",fileNameSave))) {
+                            Files.delete(Paths.get("src/",fileNameSave));
                         }
-                        Path newFile = Files.createFile(Paths.get("/Users/mrshmel/Documents/GitHub/Caesar-s-cipher/src",fileNameSave));
+
+                        Path newFile = Files.createFile(Paths.get("src/",fileNameSave));
                         BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile(), true));
                         while (reader.ready()) {
                             for (char ch : reader.readLine().toCharArray()) {
@@ -108,7 +115,15 @@ public class CaesarsСipher{
                                         if (ch[j + 1] == ' ') {
                                             if(result.stream().map(a -> a.split(" ")).allMatch(a -> Arrays.stream(a).allMatch(b -> b.length() < 25))){
                                                 try {
-                                                    BufferedReader readerConsole = new BufferedReader(new InputStreamReader(System.in));
+                                                    int numb = JOptionPane.showConfirmDialog(GUI.myDialog.panelHack, "Can the text be read?\n" + result.get(0), null, JOptionPane.YES_NO_OPTION);
+                                                    if (numb == 0) {
+                                                        JOptionPane.showMessageDialog(GUI.myDialog.panelHack, "Key = " + x);
+                                                        test = true;
+                                                        break;
+                                                    } else {
+                                                        break;
+                                                    }
+                                                    /*System.out.println(numb);                               //Console method
                                                     System.out.println("Text this normal? Y/N");
                                                     System.out.println(result.get(0));
                                                     System.out.println(result.get(1));
@@ -119,7 +134,7 @@ public class CaesarsСipher{
                                                         break;
                                                     } else {
                                                         break;
-                                                    }
+                                                    }*/
                                                 } catch (Exception e) {
                                                 }
                                             }

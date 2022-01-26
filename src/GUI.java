@@ -97,7 +97,7 @@ public class GUI extends JFrame {
          static Hack panelHack = new Hack();
 
         public myDialog() {
-            super(gui, "Hack", true);
+            super(gui, "Hack", false);
             Toolkit toolkit = Toolkit.getDefaultToolkit();
             Dimension dimension = toolkit.getScreenSize();
             this.setBounds(dimension.width / 2 - 250, dimension.height / 2 - 250, 500, 500);
@@ -139,7 +139,7 @@ public class GUI extends JFrame {
                         dispose();
                     }
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(panelHack,"Error, please retry");
                     }
                 }
             });

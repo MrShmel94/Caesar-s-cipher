@@ -194,7 +194,13 @@ public class CaesarsСipher{
             List <Character> charactersEncrypt = sortedMapEncrypt.entrySet().stream().map(a -> a.getKey()).collect(Collectors.toList());
             List <Character> charactersAnalysis = sortedMapAnalysis.entrySet().stream().map(a -> a.getKey()).collect(Collectors.toList());
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileNameSave))){
+            if (Files.exists(Paths.get("src/",fileNameSave))) {
+                Files.delete(Paths.get("src/",fileNameSave));
+            }
+
+            Path newFile = Files.createFile(Paths.get("src/",fileNameSave));
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(newFile.toFile()))){
                 for (int i = 0; i < fileEncrypt.size(); i++) {
                     char [] time = fileEncrypt.get(i).toCharArray();
                     for (int j = 0; j < time.length; j++) {
